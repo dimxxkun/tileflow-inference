@@ -127,5 +127,4 @@ for the exact guarantees, boundary reasoning and timing exclusions.
 - [Implementation](src/tileflow/core.py)
 
 Built by [Sanusi Abdulfatai Oyewunmi](https://www.sanusiabdulfatai.com), a geospatial
-software engineer, with coding-agent assistance. This is a new portfolio implementation,
-not a claim of an existing production deployment. MIT licensed.
+software engineer. MIT licensed.
