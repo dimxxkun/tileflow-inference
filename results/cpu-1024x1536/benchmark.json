@@ -1,0 +1,147 @@
+{
+  "environment": {
+    "python": "3.12.16",
+    "torch": "2.15.0+cpu",
+    "numpy": "2.5.5",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 25 Model 117 Stepping 2, AuthenticAMD",
+    "logical_cpus": 16,
+    "threads": 4,
+    "device": "cpu"
+  },
+  "fixture": "seed 2026 uniform random RGB; untrained 3->16->4 two-layer 3x3 CNN",
+  "timing_scope": "input/model setup excluded; tile planning, stacking, model and stitching included",
+  "memory_scope": "RSS sampled every 5ms during cold and warm runs; setup baseline included; estimate, not allocator peak",
+  "tolerance": {
+    "rtol": 1e-05,
+    "atol": 1e-06
+  },
+  "results": [
+    {
+      "mode": "whole",
+      "image_shape": [
+        3,
+        1024,
+        1536
+      ],
+      "tile_config": {
+        "tile_size": 256,
+        "overlap": 64,
+        "halo": 2,
+        "batch_size": 4,
+        "blend": "hann"
+      },
+      "cold_seconds": 0.06840550003107637,
+      "warm_seconds": [
+        0.07807389996014535,
+        0.07583880005404353,
+        0.07435229991097003,
+        0.07855560001917183,
+        0.07587950001470745
+      ],
+      "warm_median_seconds": 0.07587950001470745,
+      "warm_median_megapixels_per_second": 20.728444437498105,
+      "cold_process_cpu_seconds": 0.25,
+      "warm_process_cpu_seconds": [
+        0.3125,
+        0.3125,
+        0.3125,
+        0.3125,
+        0.296875
+      ],
+      "baseline_rss_mib": 290.17578125,
+      "sampled_peak_rss_mib": 580.6171875,
+      "sampled_peak_increase_mib": 290.44140625,
+      "memory_sampling_interval_ms": 5,
+      "repeats": 5,
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "parity_passed": true,
+      "argmax_agreement": 1.0
+    },
+    {
+      "mode": "streaming",
+      "image_shape": [
+        3,
+        1024,
+        1536
+      ],
+      "tile_config": {
+        "tile_size": 256,
+        "overlap": 64,
+        "halo": 2,
+        "batch_size": 4,
+        "blend": "hann"
+      },
+      "cold_seconds": 0.1735867999959737,
+      "warm_seconds": [
+        0.1698892000131309,
+        0.16732809995301068,
+        0.16762820002622902,
+        0.1716004000045359,
+        0.17208510008640587
+      ],
+      "warm_median_seconds": 0.1698892000131309,
+      "warm_median_megapixels_per_second": 9.25817532767493,
+      "cold_process_cpu_seconds": 0.6875,
+      "warm_process_cpu_seconds": [
+        0.671875,
+        0.625,
+        0.671875,
+        0.6875,
+        0.671875
+      ],
+      "baseline_rss_mib": 289.8125,
+      "sampled_peak_rss_mib": 401.3203125,
+      "sampled_peak_increase_mib": 111.5078125,
+      "memory_sampling_interval_ms": 5,
+      "repeats": 5,
+      "max_absolute_error": 1.1920928955078125e-07,
+      "mean_absolute_error": 2.9540130341842996e-09,
+      "parity_passed": true,
+      "argmax_agreement": 1.0
+    },
+    {
+      "mode": "materialized",
+      "image_shape": [
+        3,
+        1024,
+        1536
+      ],
+      "tile_config": {
+        "tile_size": 256,
+        "overlap": 64,
+        "halo": 2,
+        "batch_size": 4,
+        "blend": "hann"
+      },
+      "cold_seconds": 0.1709816000657156,
+      "warm_seconds": [
+        0.17786629998590797,
+        0.18652220000512898,
+        0.17041839996818453,
+        0.17894120002165437,
+        0.1706423000432551
+      ],
+      "warm_median_seconds": 0.17786629998590797,
+      "warm_median_megapixels_per_second": 8.84295676091882,
+      "cold_process_cpu_seconds": 0.6875,
+      "warm_process_cpu_seconds": [
+        0.6875,
+        0.75,
+        0.6875,
+        0.734375,
+        0.625
+      ],
+      "baseline_rss_mib": 289.86328125,
+      "sampled_peak_rss_mib": 460.45703125,
+      "sampled_peak_increase_mib": 170.59375,
+      "memory_sampling_interval_ms": 5,
+      "repeats": 5,
+      "max_absolute_error": 1.1920928955078125e-07,
+      "mean_absolute_error": 2.9540130341842996e-09,
+      "parity_passed": true,
+      "argmax_agreement": 1.0
+    }
+  ]
+}

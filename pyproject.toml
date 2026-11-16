@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tileflow-inference"
+version = "0.1.0"
+description = "Halo-aware tiled PyTorch inference with numerical parity and process-isolated benchmarks"
+readme = "README.md"
+authors = [{name = "Sanusi Abdulfatai Oyewunmi"}]
+requires-python = ">=3.12"
+dependencies = ["torch>=2.5,<3", "numpy>=2,<3", "psutil>=6,<8", "matplotlib>=3.9,<4"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.9"]
+
+[project.scripts]
+tileflow = "tileflow.benchmark:main"
+
+[project.urls]
+Repository = "https://github.com/dimxxkun/tileflow-inference"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
