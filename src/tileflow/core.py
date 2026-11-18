@@ -84,7 +84,7 @@ def _batches(items, batch_size):
 
 @torch.inference_mode()
 def tiled_predict(model: nn.Module, image: torch.Tensor, config=TileConfig(), *, materialize=False):
-    """Return CPU float32 [classes,H,W] logits, preserving the model's outer boundary.
+    """Return CPU float32 [channels,H,W] predictions, preserving the model's boundary.
 
     model must be in eval mode and map BCHW to BCHW at unchanged spatial resolution.
     Exact whole-frame parity requires local operations, sufficient halo, and no
@@ -121,7 +121,7 @@ def tiled_predict(model: nn.Module, image: torch.Tensor, config=TileConfig(), *,
     for batch in _batches(iterator, config.batch_size):
         predictions = model(torch.stack([crop for _, crop in batch]))
         if not isinstance(predictions, torch.Tensor):
-            raise TypeError("Model must return a tensor of logits")
+            raise TypeError("Model must return a tensor of dense predictions")
         expected_hw = batch[0][1].shape[-2:]
         if (
             predictions.ndim != 4
@@ -129,11 +129,11 @@ def tiled_predict(model: nn.Module, image: torch.Tensor, config=TileConfig(), *,
             or tuple(predictions.shape[-2:]) != tuple(expected_hw)
             or predictions.shape[1] < 1
         ):
-            raise ValueError("Model must preserve batch and spatial dimensions in BCHW logits")
+            raise ValueError("Model must preserve batch and spatial dimensions in BCHW output")
         if predictions.device.type != "cpu" or not torch.is_floating_point(predictions):
-            raise ValueError("Model must return floating-point CPU logits")
+            raise ValueError("Model must return floating-point CPU predictions")
         if not torch.isfinite(predictions).all():
-            raise FloatingPointError("Model returned non-finite logits")
+            raise FloatingPointError("Model returned non-finite predictions")
         if output is None:
             output = torch.zeros((predictions.shape[1], height, width), dtype=torch.float32)
         elif output.shape[0] != predictions.shape[1]:

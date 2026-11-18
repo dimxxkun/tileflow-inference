@@ -1,0 +1,148 @@
+{
+  "environment": {
+    "python": "3.12.16",
+    "torch": "2.15.0+cpu",
+    "numpy": "2.5.5",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 25 Model 117 Stepping 2, AuthenticAMD",
+    "logical_cpus": 16,
+    "threads": 4,
+    "device": "cpu"
+  },
+  "fixture": {
+    "kind": "trained residual RGB denoiser; caller-provided CHW image",
+    "image_sha256": "5b659486e0e0e8413425717a9d072c1121c9c52861224b6871b1ae6e13c9c5da",
+    "checkpoint_sha256": "dfce521eecc58946289410243a5db10523f21defd02c3878392010554fdd06f5"
+  },
+  "timing_scope": "input/model setup excluded; tile planning, stacking, model and stitching included",
+  "memory_scope": "RSS sampled every 5ms during cold and warm runs; setup baseline included; estimate, not allocator peak",
+  "tolerance": {
+    "rtol": 1e-05,
+    "atol": 1e-06
+  },
+  "results": [
+    {
+      "mode": "whole",
+      "image_shape": [
+        3,
+        768,
+        1024
+      ],
+      "tile_config": {
+        "tile_size": 256,
+        "overlap": 64,
+        "halo": 2,
+        "batch_size": 4,
+        "blend": "hann"
+      },
+      "cold_seconds": 0.044878099997731624,
+      "warm_seconds": [
+        0.03602909999972326,
+        0.036987799998314586,
+        0.03436890000011772,
+        0.03341480000017327,
+        0.04427679999935208
+      ],
+      "warm_median_seconds": 0.03602909999972326,
+      "warm_median_megapixels_per_second": 21.827689284662693,
+      "cold_process_cpu_seconds": 0.15625,
+      "warm_process_cpu_seconds": [
+        0.15625,
+        0.109375,
+        0.125,
+        0.1875,
+        0.125
+      ],
+      "baseline_rss_mib": 283.4375,
+      "sampled_peak_rss_mib": 448.11328125,
+      "sampled_peak_increase_mib": 164.67578125,
+      "memory_sampling_interval_ms": 5,
+      "repeats": 5,
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0,
+      "parity_passed": true
+    },
+    {
+      "mode": "streaming",
+      "image_shape": [
+        3,
+        768,
+        1024
+      ],
+      "tile_config": {
+        "tile_size": 256,
+        "overlap": 64,
+        "halo": 2,
+        "batch_size": 4,
+        "blend": "hann"
+      },
+      "cold_seconds": 0.0758730999987165,
+      "warm_seconds": [
+        0.06230190000133007,
+        0.05582919999869773,
+        0.05809600000065984,
+        0.06322320000253967,
+        0.062571399997978
+      ],
+      "warm_median_seconds": 0.06230190000133007,
+      "warm_median_megapixels_per_second": 12.622921612072997,
+      "cold_process_cpu_seconds": 0.3125,
+      "warm_process_cpu_seconds": [
+        0.25,
+        0.1875,
+        0.25,
+        0.25,
+        0.234375
+      ],
+      "baseline_rss_mib": 284.0,
+      "sampled_peak_rss_mib": 362.3984375,
+      "sampled_peak_increase_mib": 78.3984375,
+      "memory_sampling_interval_ms": 5,
+      "repeats": 5,
+      "max_absolute_error": 1.7881393432617188e-07,
+      "mean_absolute_error": 7.3057608851456735e-09,
+      "parity_passed": true
+    },
+    {
+      "mode": "materialized",
+      "image_shape": [
+        3,
+        768,
+        1024
+      ],
+      "tile_config": {
+        "tile_size": 256,
+        "overlap": 64,
+        "halo": 2,
+        "batch_size": 4,
+        "blend": "hann"
+      },
+      "cold_seconds": 0.08449970000219764,
+      "warm_seconds": [
+        0.06046300000161864,
+        0.06336890000238782,
+        0.05986529999790946,
+        0.05900900000051479,
+        0.07066100000156439
+      ],
+      "warm_median_seconds": 0.06046300000161864,
+      "warm_median_megapixels_per_second": 13.006830623339011,
+      "cold_process_cpu_seconds": 0.296875,
+      "warm_process_cpu_seconds": [
+        0.25,
+        0.25,
+        0.25,
+        0.25,
+        0.3125
+      ],
+      "baseline_rss_mib": 283.36328125,
+      "sampled_peak_rss_mib": 375.42578125,
+      "sampled_peak_increase_mib": 92.0625,
+      "memory_sampling_interval_ms": 5,
+      "repeats": 5,
+      "max_absolute_error": 1.7881393432617188e-07,
+      "mean_absolute_error": 7.3057608851456735e-09,
+      "parity_passed": true
+    }
+  ]
+}

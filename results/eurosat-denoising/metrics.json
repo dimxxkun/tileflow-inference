@@ -1,0 +1,33 @@
+{
+  "dataset": "EuroSAT RGB: real images, synthetic Gaussian corruption (sigma=0.1)",
+  "counts": {
+    "train": 1000,
+    "val": 200,
+    "test": 200
+  },
+  "noisy_test_mse": 0.0097610829398036,
+  "denoised_test_mse": 0.001672524567693472,
+  "noisy_test_psnr_db": 20.105019970166566,
+  "denoised_test_psnr_db": 27.766274941668094,
+  "psnr_definition": "-10 log10(mean pixel MSE), unit data range; outputs not clipped",
+  "selected_epoch": 10,
+  "parameters": 883,
+  "training_wall_seconds": 7.540283799997269,
+  "training_process_cpu_seconds": 29.71875,
+  "training_timing_scope": "epoch loop including validation and checkpoint writes; input setup excluded",
+  "environment": {
+    "python": "3.12.16",
+    "torch": "2.15.0+cpu",
+    "numpy": "2.5.5",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 25 Model 117 Stepping 2, AuthenticAMD",
+    "threads": 4,
+    "device": "cpu"
+  },
+  "limitations": [
+    "One seed and a small balanced subset; no claim of state-of-the-art accuracy.",
+    "Image split, not geographic holdout; near duplicates are not controlled.",
+    "Noise is simulated; no evidence of performance on real sensor corruption.",
+    "The performance mosaic has artificial patch adjacency and no georeferencing."
+  ]
+}

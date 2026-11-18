@@ -1,0 +1,16 @@
+{
+  "seed": 2026,
+  "epochs": 10,
+  "threads": 4,
+  "train_per_class": 100,
+  "eval_per_class": 20,
+  "noise_sigma": 0.1,
+  "validation_noise_seed": 2027,
+  "test_noise_seed": 2028,
+  "mosaic_noise_seed": 2029,
+  "selection": "lowest fixed-noise validation MSE; no test-based model selection",
+  "optimizer": "Adam; lr=0.001; batch_size=32",
+  "architecture": "residual-rgb-3-16-3-v1",
+  "manifest_sha256": "4c1cc4bf7d2ab439f5e16f41d83a421d6e9da56c8ea1e07600a4fe42523785fa",
+  "subset_rule": "first N manifest rows per label in each existing split"
+}

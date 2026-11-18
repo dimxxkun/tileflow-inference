@@ -1,6 +1,7 @@
 """Run each configuration in a fresh process; compare its output to whole-frame logits."""
 
 import argparse
+import hashlib
 import json
 import os
 import platform
@@ -17,19 +18,41 @@ import psutil
 import torch
 
 from .core import TileConfig, tiled_predict
-from .models import local_model
+from .models import load_denoiser, local_model
 
 
 def write_json(path, value):
     Path(path).write_text(json.dumps(value, indent=2, allow_nan=False) + "\n", encoding="utf-8")
 
 
+def file_digest(path):
+    with Path(path).open("rb") as handle:
+        return hashlib.file_digest(handle, "sha256").hexdigest()
+
+
+def load_image(path):
+    array = np.load(path, allow_pickle=False)
+    if (
+        array.ndim != 3
+        or array.shape[0] != 3
+        or min(array.shape) < 1
+        or array.dtype != np.float32
+        or not np.isfinite(array).all()
+    ):
+        raise ValueError("Benchmark image must be a finite float32 RGB CHW array")
+    return torch.from_numpy(array)
+
+
 def worker(args):
     torch.set_num_threads(args.threads)
     torch.use_deterministic_algorithms(True)
     generator = torch.Generator().manual_seed(2026)
-    image = torch.rand((3, args.height, args.width), generator=generator)
-    model = local_model()
+    image = (
+        load_image(args.image)
+        if args.image
+        else torch.rand((3, args.height, args.width), generator=generator)
+    )
+    model = load_denoiser(args.checkpoint) if args.checkpoint else local_model()
     config = TileConfig(args.tile_size, args.overlap, args.halo, args.batch_size)
     process = psutil.Process()
     base_rss = process.memory_info().rss
@@ -69,8 +92,8 @@ def worker(args):
         "cold_seconds": wall[0],
         "warm_seconds": wall[1:],
         "warm_median_seconds": statistics.median(wall[1:]),
-        "warm_median_megapixels_per_second": args.height
-        * args.width
+        "warm_median_megapixels_per_second": image.shape[-2]
+        * image.shape[-1]
         / 1e6
         / statistics.median(wall[1:]),
         "cold_process_cpu_seconds": cpu[0],
@@ -87,6 +110,8 @@ def worker(args):
 def benchmark(args):
     if min(args.height, args.width, args.threads, args.repeats) < 1:
         raise ValueError("Dimensions, threads and repeats must be positive")
+    if bool(args.image) != bool(args.checkpoint):
+        raise ValueError("Provide --image and --checkpoint together")
     config = TileConfig(args.tile_size, args.overlap, args.halo, args.batch_size)
     args.output.mkdir(parents=True, exist_ok=True)
     results = []
@@ -119,6 +144,8 @@ def benchmark(args):
             "--batch-size",
             str(config.batch_size),
         ]
+        if args.image:
+            command.extend(["--image", str(args.image), "--checkpoint", str(args.checkpoint)])
         subprocess.run(command, check=True, timeout=300)
         report = json.loads(destination.read_text(encoding="utf-8"))
         prediction = np.load(destination.with_suffix(".npy"), mmap_mode="r")
@@ -128,7 +155,8 @@ def benchmark(args):
         report["max_absolute_error"] = float(error.max())
         report["mean_absolute_error"] = float(error.mean())
         report["parity_passed"] = bool(np.allclose(prediction, reference, rtol=1e-5, atol=1e-6))
-        report["argmax_agreement"] = float((prediction.argmax(0) == reference.argmax(0)).mean())
+        if not args.checkpoint:
+            report["argmax_agreement"] = float((prediction.argmax(0) == reference.argmax(0)).mean())
         results.append(report)
         print(json.dumps(report), flush=True)
     report = {
@@ -142,7 +170,15 @@ def benchmark(args):
             "threads": args.threads,
             "device": "cpu",
         },
-        "fixture": "seed 2026 uniform random RGB; untrained 3->16->4 two-layer 3x3 CNN",
+        "fixture": (
+            {
+                "kind": "trained residual RGB denoiser; caller-provided CHW image",
+                "image_sha256": file_digest(args.image),
+                "checkpoint_sha256": file_digest(args.checkpoint),
+            }
+            if args.image
+            else "seed 2026 uniform random RGB; untrained 3->16->4 two-layer 3x3 CNN"
+        ),
         "timing_scope": "input/model setup excluded; tile planning, stacking, model and stitching included",
         "memory_scope": "RSS sampled every 5ms during cold and warm runs; setup baseline included; estimate, not allocator peak",
         "tolerance": {"rtol": 1e-5, "atol": 1e-6},
@@ -175,7 +211,7 @@ def plot_report(report, output):
         ax.spines[["top", "right"]].set_visible(False)
     shape = rows[0]["image_shape"]
     fig.suptitle(
-        f"CPU tiled inference · {shape[1]} × {shape[2]} synthetic image\n"
+        f"CPU tiled inference · {shape[1]} × {shape[2]} image\n"
         f"{report['environment']['threads']} threads · identical local CNN weights"
     )
     fig.savefig(output / "tradeoff.png", dpi=160)
@@ -194,6 +230,10 @@ def main():
     parser.add_argument("--batch-size", type=int, default=4)
     parser.add_argument("--threads", type=int, default=4)
     parser.add_argument("--repeats", type=int, default=5)
+    parser.add_argument(
+        "--image", type=Path, help="float32 RGB CHW .npy input; requires checkpoint"
+    )
+    parser.add_argument("--checkpoint", type=Path, help="trained DenoisingCNN checkpoint")
     parser.add_argument(
         "--mode", choices=["whole", "streaming", "materialized"], default="streaming"
     )

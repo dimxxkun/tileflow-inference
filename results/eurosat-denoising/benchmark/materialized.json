@@ -1,0 +1,38 @@
+{
+  "mode": "materialized",
+  "image_shape": [
+    3,
+    768,
+    1024
+  ],
+  "tile_config": {
+    "tile_size": 256,
+    "overlap": 64,
+    "halo": 2,
+    "batch_size": 4,
+    "blend": "hann"
+  },
+  "cold_seconds": 0.08449970000219764,
+  "warm_seconds": [
+    0.06046300000161864,
+    0.06336890000238782,
+    0.05986529999790946,
+    0.05900900000051479,
+    0.07066100000156439
+  ],
+  "warm_median_seconds": 0.06046300000161864,
+  "warm_median_megapixels_per_second": 13.006830623339011,
+  "cold_process_cpu_seconds": 0.296875,
+  "warm_process_cpu_seconds": [
+    0.25,
+    0.25,
+    0.25,
+    0.25,
+    0.3125
+  ],
+  "baseline_rss_mib": 283.36328125,
+  "sampled_peak_rss_mib": 375.42578125,
+  "sampled_peak_increase_mib": 92.0625,
+  "memory_sampling_interval_ms": 5,
+  "repeats": 5
+}

@@ -3,7 +3,8 @@
 **Large-image inference without materializing every tile.**
 
 TileFlow runs a spatially preserving PyTorch model over an image in bounded tile batches,
-supplies real context around each tile, and stitches overlapping logits into one output.
+supplies real context around each tile, and stitches overlapping dense predictions into
+one output, supporting class logits or regression channels.
 It includes the numerical tests and process-isolated benchmark needed to check whether
 tiling is actually correct and useful for a particular model.
 
@@ -13,6 +14,21 @@ the caller. This is an inference-systems project, with a deliberately explicit b
 between numerical correctness and model accuracy.
 
 ![Missing context produces seams; a sufficient halo removes them](results/seam-diagnostic.png)
+
+## A trained model on real images
+
+The new [EuroSAT denoising experiment](docs/denoising-experiment.md) trains a small residual
+CNN on 1,000 real satellite patches, chooses its checkpoint using 200 validation patches,
+and evaluates 200 held-out patches. With fixed synthetic Gaussian noise, aggregate PSNR
+improves from **20.11 dB to 27.77 dB**. The saved weights then run through the same tiled
+benchmark on a 768 × 1,024 mosaic of held-out patches.
+
+![Real-image denoising examples](results/eurosat-denoising/examples.png)
+
+The [raw reports](results/eurosat-denoising) include the full subset provenance, training
+history, quality metrics, and process-isolated whole/streaming/materialized comparison.
+This is simulated-noise denoising on an image split; the mosaic has artificial adjacency
+and does not establish geographic generalization or segmentation accuracy.
 
 ## Use it
 
