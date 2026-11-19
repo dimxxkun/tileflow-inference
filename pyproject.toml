@@ -7,6 +7,7 @@ name = "tileflow-inference"
 version = "0.1.0"
 description = "Halo-aware tiled PyTorch inference with numerical parity and process-isolated benchmarks"
 readme = "README.md"
+license = { file = "LICENSE" }
 authors = [{name = "Sanusi Abdulfatai Oyewunmi"}]
 requires-python = ">=3.12"
 dependencies = ["torch>=2.5,<3", "numpy>=2,<3", "psutil>=6,<8", "matplotlib>=3.9,<4"]
